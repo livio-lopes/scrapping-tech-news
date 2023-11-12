@@ -30,7 +30,11 @@ def scrape_updates(html_content):
 # Requisito 3
 def scrape_next_page_link(html_content):
     """Seu código deve vir aqui"""
-    raise NotImplementedError
+    selector = Selector(text=html_content)
+    next_page = selector.css("div.nav-links a.next::attr(href)").get()
+    if not next_page:
+        return None
+    return next_page
 
 
 # Requisito 4
@@ -49,4 +53,5 @@ if __name__ == "__main__":
     URL_BLOG = "https://blog.betrybe.com/"
     html_content = fetch(URL_BLOG)
     # print(html_content)
-    list_news = scrape_updates(html_content)
+    # list_news = scrape_updates(html_content)
+    next_page = scrape_next_page_link(html_content)
