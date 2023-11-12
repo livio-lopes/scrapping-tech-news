@@ -1,5 +1,6 @@
 import requests
 from time import sleep
+from parsel import Selector
 
 
 # Requisito 1
@@ -20,7 +21,10 @@ def fetch(url):
 # Requisito 2
 def scrape_updates(html_content):
     """Seu código deve vir aqui"""
-    raise NotImplementedError
+    selector = Selector(text=html_content)
+    all_noticies = selector.css("div.entry-thumbnail a::attr(href)").getall()
+    # print(all_noticies)
+    return all_noticies
 
 
 # Requisito 3
@@ -39,3 +43,10 @@ def scrape_news(html_content):
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
     raise NotImplementedError
+
+
+if __name__ == "__main__":
+    URL_BLOG = "https://blog.betrybe.com/"
+    html_content = fetch(URL_BLOG)
+    # print(html_content)
+    list_news = scrape_updates(html_content)
