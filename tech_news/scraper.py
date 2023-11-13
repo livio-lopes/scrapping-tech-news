@@ -133,9 +133,9 @@ def get_tech_news(amount):
     for url in news:
         html_content = fetch(url)
         notice = scrape_news(html_content)
-        create_news(notice)
-        output.append(notice)
 
+        output.append(notice)
+    create_news(output)
     return output
 
 
