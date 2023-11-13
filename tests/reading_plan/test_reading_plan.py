@@ -49,7 +49,6 @@ def test_reading_plan_group_news():
             ("O senhor dos bodes", 12),
         ],
     }
-    with patch("tech_news.database.find_news", mock_find_news):
+    with patch("tech_news.analyzer.reading_plan.find_news", mock_find_news):
         result = instance.group_news_for_available_time(10)
-
-    assert result == expected
+        assert result == expected
