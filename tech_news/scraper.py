@@ -1,7 +1,9 @@
 import requests
 import re
+import math
 from time import sleep
 from parsel import Selector
+from tech_news.database import create_news
 
 
 # Requisito 1
@@ -39,14 +41,12 @@ def scrape_next_page_link(html_content):
 
 
 def remove_tags_html(text):
-    # Usando uma expressão regular para remover as tags HTML
-    clear = re.compile("<.*?>")
-    text_without_tags = re.sub(clear, "", text)
+    tags_html = re.compile("<.*?>")
+    text_without_tags = re.sub(tags_html, "", text)
     return text_without_tags
 
 
 def remove_space_no_break(text):
-    # clear = re.sub(r'\xa0', ' ', text)
     return re.sub(r"\xa0", "", text)
 
 
@@ -86,7 +86,6 @@ def scrape_news_summary(selector):
     html_text = selector.css("div.entry-content *").css("p").get()
     html_text = remove_tags_html(html_text)
     html_text = remove_space_no_break(html_text)
-    # bode = BeautifulSoup(html_text, 'html.parser')
     return html_text.strip()
 
 
@@ -113,7 +112,31 @@ def scrape_news(html_content):
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
-    raise NotImplementedError
+    url = "https://blog.betrybe.com/"
+    news = []
+    MAX_NUMBER_NEW_FOR_PAGE = 12
+    number_scrape_pages = math.ceil(amount / MAX_NUMBER_NEW_FOR_PAGE)
+    remaining = amount
+    while number_scrape_pages != 0:
+        number_scrape_pages -= 1
+        html_content = fetch(url)
+        if remaining >= 12:
+            get_news_on_page = scrape_updates(html_content)
+            url = scrape_next_page_link(html_content)
+            remaining -= 12
+        else:
+            get_news_on_page = scrape_updates(html_content)
+            get_news_on_page = get_news_on_page[:remaining]
+
+        news.extend(get_news_on_page)
+    output = []
+    for url in news:
+        html_content = fetch(url)
+        notice = scrape_news(html_content)
+        create_news(notice)
+        output.append(notice)
+
+    return output
 
 
 if __name__ == "__main__":
