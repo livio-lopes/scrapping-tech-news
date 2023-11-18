@@ -15,7 +15,6 @@ def top_5_categories():
     output = sorted(
         count_categories.keys(), key=lambda x: (-count_categories[x], x)
     )
-    print(output[:5])
     return output[:5]
 
 
